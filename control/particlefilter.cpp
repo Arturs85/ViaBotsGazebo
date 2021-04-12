@@ -10,12 +10,15 @@ ParticleFilter::ParticleFilter(Odometry* odometry):OdometryListener(odometry)
     initializeParticles(0,0);
     odometry->subscribe((OdometryListener*)this);
     Subscriber::gpsPublisher.subscribe((GpsListener*)this);
-guiWindow.show();
+guiWindow.updateView(1,1,1);//test
+    guiWindow.show();
 }
 
 void ParticleFilter::onOdometry(Position2D position){
     //  std::cout<<"particleFilter onOdometry called "<<position.x<<std::endl;
 moveParticles(position.x,position.y,position.yaw);
+
+guiWindow.updateView(position.x,position.y,position.yaw);
 }
 void ParticleFilter::onGps(double x, double y){
     std::cout<<"particleFilter onGps called "<<x<<" "<<y<<std::endl;

@@ -80,6 +80,7 @@ void GuiWindow::updateView(float x, float y,double alfa)
     previousX = x;
     previousY = y;
     alfaGt =alfa;
+
     //repaint();
     //printf(" lines x: %d y: %d \n ",x, y);
 
