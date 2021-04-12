@@ -1,0 +1,78 @@
+<?xml version="1.0"?> 
+<sdf version="1.4">
+  <world name="default">
+
+ <gui>
+     <!-- <plugin name="sample" filename="libgui_example_spawn_widget.so"/-->
+    <!--  <plugin name="sample2" filename="libgui_example_time_widget.so"/-->
+   
+ </gui>
+
+    <!-- Ground Plane -->
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
+    
+  <model name="my_robot">
+      <include>
+        <uri>model://my_robot</uri>
+      </include>
+
+      <!-- Attach the plugin to this model -->
+  <plugin name="model_push" filename="libmodel_push.so"/>
+    </model>
+
+<model name="box">
+      <pose>-4 1 0 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>1 1 1</size>
+            </box>
+          </geometry>
+        </collision>
+
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>1 1 1</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+
+    </model>        
+  
+ <model name="longBox">
+      <pose>4 1 0.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>1 10 1</size>
+            </box>
+          </geometry>
+        </collision>
+
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>1 10 1</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+
+     
+    </model>        
+
+
+
+</world>
+</sdf>
