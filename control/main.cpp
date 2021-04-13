@@ -6,7 +6,7 @@
 #include "particlefilter.h"
 #include <QApplication>
 #include <pthread.h>
-
+#include "guiwindow.h"
 
 /* thread function */
 void *thr_func(void *arg) {
@@ -39,6 +39,9 @@ void *thr_func(void *arg) {
 int main(int _argc, char **_argv){
 
     QApplication qap(_argc,_argv);
+   GuiWindow::guiWindow = new GuiWindow();
+GuiWindow::guiWindow->show();
+
     std::cout<<"main.cpp main executed  "<<std::endl;
 
     pthread_t threadId;

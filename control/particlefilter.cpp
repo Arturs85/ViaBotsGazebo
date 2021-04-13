@@ -4,33 +4,57 @@
 #include <algorithm>
 #include <random>
 #include "subscriber.h"
+#include "guiwindow.h"
 
 ParticleFilter::ParticleFilter(Odometry* odometry):OdometryListener(odometry)
 {
     initializeParticles(0,0);
     odometry->subscribe((OdometryListener*)this);
     Subscriber::gpsPublisher.subscribe((GpsListener*)this);
-guiWindow.updateView(1,1,1);//test
-    guiWindow.show();
+    //guiWindow.updateView(1,1,1);//test
+    //   guiWindow.show();
 }
 
-void ParticleFilter::onOdometry(Position2D position){
+void ParticleFilter::onOdometry(Position2D position, Position2D deltaPosition){
     //  std::cout<<"particleFilter onOdometry called "<<position.x<<std::endl;
-moveParticles(position.x,position.y,position.yaw);
+    moveParticles(deltaPosition.x,deltaPosition.y,deltaPosition.yaw);
+    addMovmentNoise();
+    if(GuiWindow::guiWindow!=0)
+        GuiWindow::guiWindow->updateView(position.x,position.y,position.yaw);
 
-guiWindow.updateView(position.x,position.y,position.yaw);
 }
-void ParticleFilter::onGps(double x, double y){
-    std::cout<<"particleFilter onGps called "<<x<<" "<<y<<std::endl;
 
+void ParticleFilter::onGps(double x, double y){
+  //  std::cout<<"particleFilter onGps called "<<x<<" "<<y<<std::endl;
+
+
+    calcFitness(x,y);
+    regenerateParticles();
+    GuiWindow::guiWindow->particles = particles;
+
+    Particle avg =calcAverageParticle();
+    GuiWindow::guiWindow->avgParticle =avg;
+
+    if(GuiWindow::guiWindow!=0){
+        GuiWindow::guiWindow->updateEstimateView(x,y);
+        GuiWindow::guiWindow->avgParticle =avg;
+    }
 }
 
 void ParticleFilter::moveParticles(double dx, double dy, double dyaw)
 {
     for (int i = 0; i < particles.size(); i++) {
+
+        double dist =  std::sqrt(dx*dx+dy*dy);
+        double travelAngle = particles.at(i).direction+dyaw/2;
+
+
         double fi = atan2(dy,dx);
-        double dxg = dx*cos(fi+particles.at(i).direction)/cos(fi);
-        double dyg = dy*sin(fi+particles.at(i).direction)/sin(fi);
+        //double dxg = dx*cos(fi+particles.at(i).direction)/cos(fi);
+        //double dyg = dy*sin(fi+particles.at(i).direction)/sin(fi);
+        double dxg = dist*cos(travelAngle);
+        double dyg = dist*sin(travelAngle);
+
         particles.at(i).x+=dxg;
         particles.at(i).y+=dyg;
         particles.at(i).direction+=dyaw;
@@ -61,8 +85,10 @@ void ParticleFilter::regenerateParticles()
 {
     std::sort(particles.begin(), particles.end());// sort by fitness, at this point fitness should point, how much descendants particle should have
     std::vector<Particle> particlesRegenerated;
-    for (int i = particles.size()-1; i >= 0; i--) {
+   int parentCount =0;
+   for (int i = particles.size()-1; i >= 0; i--) {
         int descendantCount =   ((int)(particles.at(i).fitness))+1;// round up
+        parentCount ++;
         //create descendants
         for (int j = 0; j < descendantCount; ++j) {
             particlesRegenerated.push_back(particles.at(i));//todo distribute descendants spatially
@@ -72,37 +98,49 @@ void ParticleFilter::regenerateParticles()
         if(particlesRegenerated.size()>=PARTICLE_COUNT)break;
 
     }
+  std::cout<<"nr of parents "<<parentCount<<" max descendants count: "<<(((particles.at(particles.size()-1).fitness))+1)<<std::endl;
+
     particles = particlesRegenerated;// should we copy data  or adress only?
 }
 
 void ParticleFilter::addMovmentNoise()
 {
+    std::default_random_engine generator;
+    std::normal_distribution<double> distribution(0.0,0.1);// stddev value?
+    std::normal_distribution<double> angledistribution(0.0,M_PI/32);// stddev value?
+
     for (int i = 0; i < particles.size(); i++) {
 
-        std::default_random_engine generator;
-        std::normal_distribution<double> distribution(0.0,0.1);// stddev value?
-        std::normal_distribution<double> angledistribution(0.0,M_PI/4);// stddev value?
 
-        double errx = std::abs(distribution(generator));
-        double erry = std::abs(distribution(generator));
+
+        double errx = (distribution(generator));
+        double erry = (distribution(generator));
         double errYaw = (angledistribution(generator));
 
-        particles.at(i).x-=errx;//remove only, because wheel slip cant produce larger distance than measured by odo?
-        particles.at(i).y-=erry;
+        particles.at(i).x+=errx;//remove only, because wheel slip cant produce larger distance than measured by odo?
+        particles.at(i).y+=erry;
         particles.at(i).direction+=errYaw;
 
     }
 }
 
-double ParticleFilter::calcAverageDirection()
+Particle ParticleFilter::calcAverageParticle()
 {
-    double dir=0;
-    for (int i = 0; i < particles.size(); i++) {
-        dir+=particles.at(i).direction;
+    Particle avg(0,0,0);
+//    avg.direction=0;
+//    avg.x=0;
+//    avg.y=0;
 
+    for (int i = 0; i < particles.size(); i++) {
+        avg.direction+=particles.at(i).direction;
+        avg.x+=particles.at(i).x;
+        avg.y+=particles.at(i).y;
     }
-    dir = dir/particles.size();
-    return dir;
+    avg.direction =  avg.direction/particles.size();
+    avg.x =  avg.x/particles.size();
+    avg.y =  avg.y/particles.size();
+
+    return avg;
 }
 
 

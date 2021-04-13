@@ -73,6 +73,9 @@ void Odometry::updatePose()
     pose.yaw+=deltaYaw;
     pose.yaw = std::remainder(pose.yaw,2*M_PI);
     linearVelocity = travel/dt;
+  deltaPose.x =dx;
+  deltaPose.y = dy;
+  deltaPose.yaw = deltaYaw;
     makeAllCallbacks();
 }
 
@@ -81,7 +84,7 @@ OdometryListener::OdometryListener(Odometry *odometry){
     odo = odometry;
 }
 
-void OdometryListener::callBack(){onOdometry(odo->pose);}
+void OdometryListener::callBack(){onOdometry(odo->pose, odo->deltaPose);}
 OdometryListener::~OdometryListener()
 {
 

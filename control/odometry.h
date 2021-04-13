@@ -18,7 +18,7 @@ public:
     double dt =0;
     double linearVelocity =0;
     Position2D pose;
-
+Position2D deltaPose;
 
     void updateAngles(double left, double right);
     void updateAnglesFromSpeed(double leftSpeed, double rightSpeed);
@@ -43,7 +43,7 @@ public:
     void callBack();
     ~OdometryListener();
 protected:
-   virtual void onOdometry(Position2D position)=0;
+   virtual void onOdometry(Position2D position,Position2D deltaPosition)=0;
 private:
     Odometry* odo;
 };

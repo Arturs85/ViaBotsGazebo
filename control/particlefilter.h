@@ -3,7 +3,6 @@
 #include "odometry.h"
 #include "trajectoryexecutor.h"
 #include <vector>
-#include "guiwindow.h"
 class Particle{
 public:
     Particle(double x,double y, double yaw);
@@ -28,17 +27,17 @@ public:
     void initializeParticles(int x, int y);
     static const int PARTICLE_COUNT = 100;
     static const int GPS_DIST_ERR = 1;
-GuiWindow guiWindow;
+//GuiWindow guiWindow;
     void onGps(double x, double y);
 protected:
-    void onOdometry(Position2D position);
+    void onOdometry(Position2D position, Position2D deltaPosition);
 private:
     std::vector<Particle> particles;
     void moveParticles(double dx, double dy, double dyaw);
 void calcFitness(double xGps, double yGps);
 void regenerateParticles();
 void addMovmentNoise();
-double calcAverageDirection();
+Particle calcAverageParticle();
 };
 
 #endif // PARTICLEFILTER_H

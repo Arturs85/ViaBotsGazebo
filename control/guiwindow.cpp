@@ -10,8 +10,10 @@ GuiWindow::GuiWindow(QWidget *parent)
     image = new QImage(initialWidth, initialHeight, QImage::Format_RGB32);
     image->fill(QColor(100,100,100));
     //offscreenPainter = new QPainter(image);
+
 }
 
+GuiWindow* GuiWindow::guiWindow =0;
 
 void GuiWindow::paintEvent(QPaintEvent */*e*/) {
 
@@ -31,11 +33,25 @@ void GuiWindow::paintEvent(QPaintEvent */*e*/) {
     qp.drawEllipse(QPoint(centerX+previousX*zoom,centerY-previousY*zoom), 3, 3);
     qp.drawLine(centerX+previousX*zoom,centerY-previousY*zoom,centerX+previousX*zoom+10*cos(alfaGt),centerY-previousY*zoom -10*sin(alfaGt));
 
-    QPen penGreen(Qt::green, 3, Qt::SolidLine);
+    QPen penGreen(Qt::green, 1, Qt::SolidLine);
     qp.setPen(penGreen);
     qp.drawEllipse(QPoint(centerX+previousXEst*zoom,centerY-previousYEst*zoom), 3, 3);
 
-    //update();
+    for(Particle p: particles){
+        qp.drawEllipse(QPoint(centerX+p.x*zoom,centerY-p.y*zoom), 3, 3);
+        qp.drawLine(centerX+p.x*zoom,centerY-p.y*zoom,centerX+p.x*zoom+10*cos(p.direction),centerY-p.y*zoom -10*sin(p.direction));
+
+
+    }
+
+    QPen penBlue(Qt::blue, 2, Qt::SolidLine);
+    qp.setPen(penBlue);
+
+    qp.drawEllipse(QPoint(centerX+avgParticle.x*zoom,centerY-avgParticle.y*zoom), 3, 3);
+    qp.drawLine(centerX+avgParticle.x*zoom,centerY-avgParticle.y*zoom,centerX+avgParticle.x*zoom+10*cos(avgParticle.direction),centerY-avgParticle.y*zoom -10*sin(avgParticle.direction));
+
+
+    update();
 }
 
 void GuiWindow::drawLines(QPainter *qp) {
@@ -84,6 +100,11 @@ void GuiWindow::updateView(float x, float y,double alfa)
     //repaint();
     //printf(" lines x: %d y: %d \n ",x, y);
 
+}
+
+void GuiWindow::updateFromMainThread()
+{
+    update();
 }
 void GuiWindow::updateEstimateView(float x, float y)
 {

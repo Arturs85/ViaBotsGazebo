@@ -9,7 +9,8 @@
  #include <QImage>
 #include <QPainter>
 #include <QPoint>
-
+#include "particlefilter.h"
+#include <vector>
 
 class GuiWindow : public QWidget
 {
@@ -19,13 +20,15 @@ class GuiWindow : public QWidget
 public:
     GuiWindow(QWidget *parent = 0);
    // ~GuiWindow();
+  static GuiWindow* guiWindow;
     void updateView(float x,float y,double alfa);
+    void updateFromMainThread();
     QSize minimumSizeHint() const Q_DECL_OVERRIDE;
     QSize sizeHint() const Q_DECL_OVERRIDE;
     int x;
     int y;
     double alfaGt=0;
-    const int zoom = 10;
+    const int zoom = 40;
     const int initialHeight = 800;
     int initialWidth = 1000;
     int centerY= initialHeight/2;
@@ -33,6 +36,8 @@ public:
 
     void updateEstimateView(float x, float y);
     void updateDistanceView(double distance);
+    std::vector<Particle> particles;
+Particle avgParticle= Particle(0,0,0);
 protected:
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
     void drawLines(QPainter *qp);
