@@ -11,7 +11,11 @@ public:
     double direction;
     double fitness;
     bool isValid = true;
+double addToDirectionAndNormalize(double dYaw){
+    direction+= dYaw;
+    direction = std::remainder(direction,2*M_PI);
 
+}
     bool operator < (const Particle& other) const
         {
             return (fitness < other.fitness);

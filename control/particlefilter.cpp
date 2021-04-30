@@ -28,13 +28,16 @@ void ParticleFilter::onGps(double x, double y){
   //  std::cout<<"particleFilter onGps called "<<x<<" "<<y<<std::endl;
 
 
-    calcFitness(x,y);
-    regenerateParticles();
+    //draw before regeneration, to see movement
     GuiWindow::guiWindow->particles = particles;
 
+
+
+
+    calcFitness(x,y);
+    regenerateParticles();
     Particle avg =calcAverageParticle();
     GuiWindow::guiWindow->avgParticle =avg;
-
     if(GuiWindow::guiWindow!=0){
         GuiWindow::guiWindow->updateEstimateView(x,y);
         GuiWindow::guiWindow->avgParticle =avg;
@@ -57,7 +60,7 @@ void ParticleFilter::moveParticles(double dx, double dy, double dyaw)
 
         particles.at(i).x+=dxg;
         particles.at(i).y+=dyg;
-        particles.at(i).direction+=dyaw;
+        particles.at(i).addToDirectionAndNormalize(dyaw);
     }
 }
 
@@ -106,8 +109,8 @@ void ParticleFilter::regenerateParticles()
 void ParticleFilter::addMovmentNoise()
 {
     std::default_random_engine generator;
-    std::normal_distribution<double> distribution(0.0,0.1);// stddev value?
-    std::normal_distribution<double> angledistribution(0.0,M_PI/32);// stddev value?
+    std::normal_distribution<double> distribution(0.0,0.02);// stddev value?
+    std::normal_distribution<double> angledistribution(0.0,M_PI/128);// stddev value?
 
     for (int i = 0; i < particles.size(); i++) {
 
@@ -119,7 +122,7 @@ void ParticleFilter::addMovmentNoise()
 
         particles.at(i).x+=errx;//remove only, because wheel slip cant produce larger distance than measured by odo?
         particles.at(i).y+=erry;
-        particles.at(i).direction+=errYaw;
+        particles.at(i).addToDirectionAndNormalize(errYaw);
 
     }
 }
