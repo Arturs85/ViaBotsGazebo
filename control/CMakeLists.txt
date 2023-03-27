@@ -15,6 +15,6 @@ set (CMAKE_SHARED_LINKER_FLAGS "-lpthread -pthread")
 
 
 add_executable(control main.cpp subscriber.cpp odometry.cpp motorcontrol.cpp trajectoryexecutor.cpp pathplanner.cpp varibleradiusmotion.cpp publisherbase.cpp
-    particlefilter.cpp guiwindow.cpp)
+    particlefilter.cpp guiwindow.cpp nmeamsgreader.cpp)
 qt5_use_modules(control Widgets Core)
 target_link_libraries(control ${GAZEBO_LIBRARIES}   ${Qt5Core_LIBRARIES} ${Qt5Widgets_LIBRARIES} pthread)

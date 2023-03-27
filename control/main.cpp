@@ -7,6 +7,7 @@
 #include <QApplication>
 #include <pthread.h>
 #include "guiwindow.h"
+#include "nmeamsgreader.h"
 
 /* thread function */
 void *thr_func(void *arg) {
@@ -37,7 +38,7 @@ void *thr_func(void *arg) {
 }
 
 int main(int _argc, char **_argv){
-
+NmeaMsgReader nmeaReader;
     QApplication qap(_argc,_argv);
    GuiWindow::guiWindow = new GuiWindow();
 GuiWindow::guiWindow->show();
