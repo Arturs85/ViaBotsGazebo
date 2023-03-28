@@ -20,13 +20,13 @@ void *thr_func(void *arg) {
     TrajectoryExecutor trajectoryExecutor;
     PathPlanner pathPalnner;
     ParticleFilter particleFilter(&Subscriber::odo);
-    trajectoryExecutor.setTarget(0.3,0,-4);
+    trajectoryExecutor.setTarget(0.1,0,-4);
     std::cout<<"trajestoryexec set target executed "<<std::endl;
 
     while(true){
         if( trajectoryExecutor.tick()){
             Position2D nextPoint = pathPalnner.getNextPosition();
-            trajectoryExecutor.setTarget(0.3,nextPoint.x, nextPoint.y);
+            trajectoryExecutor.setTarget(0.1,nextPoint.x, nextPoint.y);
         }
         // std::cout<<"trajestoryexec tick executed "<<std::endl;
 

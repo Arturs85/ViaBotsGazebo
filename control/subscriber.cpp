@@ -13,12 +13,14 @@
 
 int Subscriber::counter =0;
 int Subscriber::c =0;
+double Subscriber::lineSensorReading = 100;
 Odometry Subscriber::odo;
 GpsPublisher Subscriber::gpsPublisher;
 
 transport::NodePtr Subscriber::node;
 transport::SubscriberPtr Subscriber::statsSub;
 transport::SubscriberPtr Subscriber::gpsSub;
+transport::SubscriberPtr Subscriber::lineSub;
 
 transport::PublisherPtr Subscriber::wheeSpeedPub;
 
@@ -42,6 +44,11 @@ void Subscriber::OnOdometryMsg(ConstVector2dPtr &_msg){
 
     // std::cout<<"odom msg "<<_msg->x()<<" "<<_msg->y()<<std::endl;
     odo.updateAngles(_msg->x(),_msg->y());
+}
+
+void Subscriber::OnLineSensorMsg(ConstVector2dPtr &_msg)
+{
+    lineSensorReading = _msg->x();
 }
 
 void Subscriber::sendWheelSpeeds(double l, double r){
@@ -69,6 +76,7 @@ int Subscriber::init(){
     node->Init("default");
     statsSub = node->Subscribe("~/odometry", &Subscriber::OnOdometryMsg);
     gpsSub = node->Subscribe("~/gps", &Subscriber::OnGpsMsg);
+    lineSub = node->Subscribe("~/lineSensor", &Subscriber::OnLineSensorMsg);
 
     wheeSpeedPub = node->Advertise<msgs::Vector2d>("~/motorControlSub");
     while(wheeSpeedPub.get()->GetRemoteSubscriptionCount()<1){//wait while we hav subscriber

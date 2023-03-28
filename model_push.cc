@@ -31,6 +31,7 @@ class ModelPush : public ModelPlugin
     /// \brief Publisher of factory messages.
 private: transport::PublisherPtr odoPublisher;
 private: transport::PublisherPtr gpsPublisher;
+private: transport::PublisherPtr lineSensorPublisher;
 private: physics::WorldPtr world;
 
     // Odometry odo;
@@ -137,7 +138,7 @@ public: Line2p getCurentSensorAbsLoction(){
         double blx = msg0.box().size().x();
         double bly = msg0.box().size().y(); //todo move to startup
 
-       // std::cout<<" base lnk world pose: "<<baseLink->WorldPose()<< " blx: "<<blx<<" bly:"<<bly<<std::endl;
+        // std::cout<<" base lnk world pose: "<<baseLink->WorldPose()<< " blx: "<<blx<<" bly:"<<bly<<std::endl;
 
         //sensor absolute x1,y1
         double fi = std::atan2(bly/2,blx/2);
@@ -164,15 +165,15 @@ public: double getLineSensorReading(Line2p sensor){
                 double dy = sensor.y1-iy;
 
                 double len = std::sqrt(dx*dx+dy*dy);
-                 dx = sensor.x1-sensor.x2;
-                 dy = sensor.y1-sensor.y2;
+                dx = sensor.x1-sensor.x2;
+                dy = sensor.y1-sensor.y2;
 
                 double sensorLen = std::sqrt(dx*dx+dy*dy);
 
                 res= sensorLen/2-len;
                 std::cout<<" hasIntersevtion : "<<hasIntersection<<" "<<ix<<"  " <<iy<<std::endl;
- std::cout<<"line  p1: "<<lines.at(i).x1<<" "<<lines.at(i).y1<<" p2: "<<lines.at(i).x2<<" "<<lines.at(i).y2<<std::endl;
-  std::cout<<"sens  p1: "<<sensor.x1<<" "<<sensor.y1<<" p2: "<<sensor.x2<<" "<<sensor.y2<<std::endl;
+                std::cout<<"line  p1: "<<lines.at(i).x1<<" "<<lines.at(i).y1<<" p2: "<<lines.at(i).x2<<" "<<lines.at(i).y2<<std::endl;
+                std::cout<<"sens  p1: "<<sensor.x1<<" "<<sensor.y1<<" p2: "<<sensor.x2<<" "<<sensor.y2<<std::endl;
             }
         }
 
@@ -208,6 +209,7 @@ public: void Load(physics::ModelPtr _parent, sdf::ElementPtr /*_sdf*/)
         this->statsSub = this->node->Subscribe("~/motorControlSub", &ModelPush::OnControlMsg,this);
         this->odoPublisher = this->node->Advertise<msgs::Vector2d>("~/odometry");
         this->gpsPublisher = this->node->Advertise<msgs::Vector2d>("~/gps");
+        this->lineSensorPublisher = this->node->Advertise<msgs::Vector2d>("~/lineSensor");
 
         baseLink = links.at(0);
         //   baseLink->SetLinearVel(ignition::math::Vector3d(velX, 0.1, 0));
@@ -311,9 +313,14 @@ public: void OnUpdate()
             this->odoPublisher->Publish(msg);
 
             Line2p sensor = getCurentSensorAbsLoction();
-           // std::cout<<sensor.x1<<" "<<sensor.y1<<" "<<sensor.x2<<" "<<sensor.y2<<std::endl;
-double reading = getLineSensorReading(sensor);
-std::cout<<"line sensor reading: "<<reading <<std::endl;
+            // std::cout<<sensor.x1<<" "<<sensor.y1<<" "<<sensor.x2<<" "<<sensor.y2<<std::endl;
+            double reading = getLineSensorReading(sensor);
+            msgs::Vector2d msgLine;
+
+            msgLine.set_x(reading);
+            msgLine.set_y(reading);
+            this->lineSensorPublisher->Publish(msgLine);
+            std::cout<<"line sensor reading: "<<reading <<std::endl;
             if(counter%1000==0){//gps msg, todo - make time vased intervals instead of iteration count based ones
 
                 msgs::Vector2d gpsMsg;

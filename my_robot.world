@@ -19,6 +19,7 @@
 
     
   <model name="my_robot">
+  <pose>0 0 0 0 0 0.5</pose>
       <include>
         <uri>model://my_robot</uri>
       </include>
@@ -165,7 +166,7 @@
         <kinematic>0</kinematic>
         <gravity>1</gravity>
       </link>
-      <pose frame=''>-4.22185 -0.631207 0 0 -0 0</pose>
+      <pose frame=''>0 -0.631207 0 0 -0 1</pose>
     </model>
     <model name='yellow line_3'>
       <static>1</static>

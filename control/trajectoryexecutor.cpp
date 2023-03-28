@@ -5,6 +5,7 @@
 #include <iostream>
 #include "subscriber.h"
 #include "varibleradiusmotion.h"
+#include "linefollower.h"
 
 TrajectoryExecutor::TrajectoryExecutor()
 {
@@ -45,11 +46,13 @@ bool TrajectoryExecutor::tick()
     case DrivingState::TO_TARGET:{
 
 
+double deltaYaw = LineFollower::getYaw(Subscriber::lineSensorReading);
     //  double deltaYaw = motorControl->odometryFromControl->pose.calcYawToPoint(targetPos);
-    double deltaYaw = odometry->pose.calcYawPoseToPoint(targetPos);
+   // double deltaYaw = odometry->pose.calcYawPoseToPoint(targetPos);
 deltaYaw = std::remainder(deltaYaw,2*M_PI); // normalize to -pi;pi
     //determine the sign of angular acceleration
-    double angAccToZero = angVel*angVel/(2*std::abs(deltaYaw));
+    if(std::abs(deltaYaw)<0.0001)deltaYaw = 0.0001; // avoid possible div/zero
+double angAccToZero = angVel*angVel/(2*std::abs(deltaYaw));
     double angAccSign =1;
     if(angAccToZero > angAccel){// negative angular acceleration to increase turning radius
         angAccSign = -1;
@@ -70,7 +73,7 @@ radius*=-1;
     counter++;
     double dist =targetPos.distance(odometry->pose);
     if(counter%1==0){
-      //  std::cout<<"trajexec dist to target = "<<dist<<" angVel: "<<angVel<<" radi: "<<radius<<" dYaw: "<<deltaYaw<<" angacctoz : "<<angAccToZero<<" odyaw: "<<odometry->pose.yaw<<" linVelOdo: "<<odometry->getLinearVelocity()<<" \n";
+        std::cout<<"trajexec dist to target = "<<dist<<" angVel: "<<angVel<<" radi: "<<radius<<" dYaw: "<<deltaYaw<<" angacctoz : "<<angAccToZero<<" odyaw: "<<odometry->pose.yaw<<" linVelOdo: "<<odometry->getLinearVelocity()<<" \n";
 
     }
      if(dist < arrivedDistTreshold){//stop movement
