@@ -118,7 +118,7 @@
         <kinematic>0</kinematic>
         <gravity>1</gravity>
       </link>
-      <pose frame=''>0.5 0.5 0 0 -0 0.785398</pose>
+      <pose frame=''>0.5 0.5 0.01 0 -0 0.785398</pose>
     </model>
   <model name='yellow line_2'>
       <static>1</static>
@@ -166,7 +166,7 @@
         <kinematic>0</kinematic>
         <gravity>1</gravity>
       </link>
-      <pose frame=''>1.5 1 0 0 -0 0</pose>
+      <pose frame=''>1.5 1 0.01 0 -0 0</pose>
     </model>
 
    <model name='yellow line_3'>
@@ -218,8 +218,18 @@
       <pose frame=''>2.5 1.5 0 0 -0 0.785398</pose>
     </model>
 
+    
+       <model name="marker_1">
+         <include>
+      <uri>model://marker</uri>
+      <pose>1.2 0 0.01 0 0 0</pose>
+    </include>
+    
+      </model>
+      
+  
+   
 
-     
 
 </world>
 </sdf>
