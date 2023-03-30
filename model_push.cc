@@ -257,9 +257,16 @@ public: void Load(physics::ModelPtr _parent, sdf::ElementPtr /*_sdf*/)
 
                 printf(" line shape size: %f \n ",msg.plane().size().x());
 
-                double x2 =l*std::cos(m->RelativePose().Yaw())+m->RelativePose().Pos().X();
-                double y2 =l*std::sin(m->RelativePose().Yaw())+m->RelativePose().Pos().Y();
-                lines.push_back(Line2p(m->RelativePose().Pos().X(),m->RelativePose().Pos().Y(),x2,y2));
+
+                double dx = l/2*std::cos(m->RelativePose().Yaw());
+                double dy = l/2*std::sin(m->RelativePose().Yaw());
+                double x2 =dx+m->RelativePose().Pos().X();
+                double y2 =dy+m->RelativePose().Pos().Y();
+                double x1 =-dx+m->RelativePose().Pos().X();
+                double y1 =-dy+m->RelativePose().Pos().Y();
+
+
+                lines.push_back(Line2p(x1,y1,x2,y2));
                 //  targetPos=& m->RelativePose().Pos();
                 //atjaunina waypoints sarakstu
                 // if(std::find(waypoints.begin(), waypoints.end(), m) != waypoints.end()) {

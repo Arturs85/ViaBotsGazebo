@@ -50,7 +50,7 @@ private: MotorControl* motorControl;
 private: Odometry* odometry;
 
     Position2D targetPos;
-    double minRadius = 0.3;
+    double minRadius = 0.1;
     double desiredSpeed;
     double angAccel = 0.11;//rad/s^2 0.017 rad = 1 deg
     double angVel = 0;

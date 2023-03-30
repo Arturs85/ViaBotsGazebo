@@ -79,7 +79,7 @@
           <geometry>
             <plane>
               <normal>0 0 1</normal>
-              <size>6.5 0.1</size>
+              <size>1.41421 0.1</size>
             </plane>
           </geometry>
           <surface>
@@ -104,7 +104,7 @@
           <geometry>
             <plane>
               <normal>0 0 1</normal>
-              <size>6.5 0.1</size>
+              <size>1.41421 0.1</size>
             </plane>
           </geometry>
           <material>
@@ -118,7 +118,7 @@
         <kinematic>0</kinematic>
         <gravity>1</gravity>
       </link>
-      <pose frame=''>0.58753 -3.34297 0 0 -0 0</pose>
+      <pose frame=''>0.5 0.5 0 0 -0 0.785398</pose>
     </model>
   <model name='yellow line_2'>
       <static>1</static>
@@ -127,7 +127,7 @@
           <geometry>
             <plane>
               <normal>0 0 1</normal>
-              <size>11 0.1</size>
+               <size>1 0.1</size>
             </plane>
           </geometry>
           <surface>
@@ -152,7 +152,7 @@
           <geometry>
             <plane>
               <normal>0 0 1</normal>
-              <size>11 0.1</size>
+               <size>1 0.1</size>
             </plane>
           </geometry>
           <material>
@@ -166,16 +166,17 @@
         <kinematic>0</kinematic>
         <gravity>1</gravity>
       </link>
-      <pose frame=''>0 -0.631207 0 0 -0 1</pose>
+      <pose frame=''>1.5 1 0 0 -0 0</pose>
     </model>
-    <model name='yellow line_3'>
+
+   <model name='yellow line_3'>
       <static>1</static>
       <link name='link_ground'>
         <collision name='collision'>
           <geometry>
             <plane>
               <normal>0 0 1</normal>
-              <size>2 0.1</size>
+              <size>1.41421 0.1</size>
             </plane>
           </geometry>
           <surface>
@@ -200,7 +201,7 @@
           <geometry>
             <plane>
               <normal>0 0 1</normal>
-              <size>2 0.1</size>
+              <size>1.41421 0.1</size>
             </plane>
           </geometry>
           <material>
@@ -214,8 +215,9 @@
         <kinematic>0</kinematic>
         <gravity>1</gravity>
       </link>
-      <pose frame=''>-5.97205 -7.09986 0 0 -0 0</pose>
+      <pose frame=''>2.5 1.5 0 0 -0 0.785398</pose>
     </model>
+
 
      
 
