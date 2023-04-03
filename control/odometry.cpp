@@ -1,7 +1,7 @@
 #include "odometry.h"
 #include <cmath>
 #include "trajectoryexecutor.h"
-
+#include <iostream>
 Odometry::Odometry()
 {
 
@@ -16,6 +16,7 @@ void Odometry::updateAngles(double left, double right)
     dt = time - prevSpeedUpdateTime;
     this->angleLeftCumulative=left;
     this->angleRightCumulative=right;
+    std::cout<<left <<" "<<right<<" "<<dt<<std::endl;
     prevSpeedUpdateTime = time;
     updatePose();
 

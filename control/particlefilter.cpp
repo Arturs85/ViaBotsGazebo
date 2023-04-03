@@ -101,7 +101,7 @@ void ParticleFilter::regenerateParticles()
         if(particlesRegenerated.size()>=PARTICLE_COUNT)break;
 
     }
-  std::cout<<"nr of parents "<<parentCount<<" max descendants count: "<<(((particles.at(particles.size()-1).fitness))+1)<<std::endl;
+ // std::cout<<"nr of parents "<<parentCount<<" max descendants count: "<<(((particles.at(particles.size()-1).fitness))+1)<<std::endl;
 
     particles = particlesRegenerated;// should we copy data  or adress only?
 }

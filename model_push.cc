@@ -153,8 +153,12 @@ public: Line2p getCurentSensorAbsLoction(){
 
         return res;
     }
-public: double getLineSensorReading(Line2p sensor){
-        double res = 100;// to line
+public: msgs::Vector2d getLineSensorReading(Line2p sensor){
+        double resLeft = -100;// to line
+        double resRight =100;// to line
+        msgs::Vector2d msgLine;
+
+
         bool hasIntersection = false;
         float ix, iy;
         for (size_t i = 0; i < lines.size(); ++i) {
@@ -170,14 +174,18 @@ public: double getLineSensorReading(Line2p sensor){
 
                 double sensorLen = std::sqrt(dx*dx+dy*dy);
 
-                res= sensorLen/2-len;
+                double res = sensorLen/2-len;
+                 if (res  >=resLeft)resLeft =res;
+                 if (res  <=resRight)resRight =res;
+
                 std::cout<<" hasIntersevtion : "<<hasIntersection<<" "<<ix<<"  " <<iy<<std::endl;
                 std::cout<<"line  p1: "<<lines.at(i).x1<<" "<<lines.at(i).y1<<" p2: "<<lines.at(i).x2<<" "<<lines.at(i).y2<<std::endl;
                 std::cout<<"sens  p1: "<<sensor.x1<<" "<<sensor.y1<<" p2: "<<sensor.x2<<" "<<sensor.y2<<std::endl;
             }
         }
-
-        return res;
+        msgLine.set_x(resLeft);
+        msgLine.set_y(resRight);
+        return msgLine;
     }
 
 public: void Load(physics::ModelPtr _parent, sdf::ElementPtr /*_sdf*/)
@@ -321,13 +329,10 @@ public: void OnUpdate()
 
             Line2p sensor = getCurentSensorAbsLoction();
             // std::cout<<sensor.x1<<" "<<sensor.y1<<" "<<sensor.x2<<" "<<sensor.y2<<std::endl;
-            double reading = getLineSensorReading(sensor);
-            msgs::Vector2d msgLine;
+            msgs::Vector2d msgLine = getLineSensorReading(sensor);
 
-            msgLine.set_x(reading);
-            msgLine.set_y(reading);
             this->lineSensorPublisher->Publish(msgLine);
-            std::cout<<"line sensor reading: "<<reading <<std::endl;
+            std::cout<<"line sensor reading: "<<msgLine.x()<<" "<<msgLine.y() <<std::endl;
             if(counter%1000==0){//gps msg, todo - make time vased intervals instead of iteration count based ones
 
                 msgs::Vector2d gpsMsg;
